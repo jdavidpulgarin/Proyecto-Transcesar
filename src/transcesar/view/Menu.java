@@ -63,7 +63,7 @@ public class Menu {
                 default ->
                     JOptionPane.showMessageDialog(null, "Opcion invalida");
             }
-        } while (opcion != 11);
+        } while (opcion != 0);
     }
 
     // cree metodos aplicando encapsulamiento para los VEHICULOS
