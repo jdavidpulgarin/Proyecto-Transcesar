@@ -197,7 +197,7 @@ public class Menu {
 
     // estadisticas
     private void totalRecaudado() {
-        // TODO: TicketService
+        
         JOptionPane.showMessageDialog(null,
                 " TOTAL RECAUDADO\n"
                 + "Total: $0");
