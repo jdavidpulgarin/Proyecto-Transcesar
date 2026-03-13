@@ -27,6 +27,12 @@ public abstract class Vehiculo {
         return pasajerosActuales < capacidadMaxima;
     }
 
+    public void agregarPasajero() {
+    pasajerosActuales++;
+}
+    public String getTipo() {
+    return getClass().getSimpleName();
+}
     public void imprimirDetalle() {
         System.out.println("Placa: " + placa + " | Ruta: " + ruta +
             " | Cupos: " + (capacidadMaxima - pasajerosActuales) + 
