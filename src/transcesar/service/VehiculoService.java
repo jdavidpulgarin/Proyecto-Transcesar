@@ -46,7 +46,7 @@ public class VehiculoService {
     }
 
   
-    public String buscarVehiculo(String placa, String archivo) {
+    public String buscarVehiculoPorPlaca(String placa, String archivo) {
         String resultado = vehiculoDAO.buscarPorPlaca(placa, archivo);
         if (resultado == null) {
             throw new IllegalArgumentException("No se encontró vehículo con placa: "
@@ -75,7 +75,7 @@ public class VehiculoService {
     }
 
     
-    public void actualizarVehiculo(Vehiculo v, String placaAnterior) {
+    public void actualizarVehiculos(Vehiculo v, String placaAnterior) {
         String archivo = obtenerArchivo(v);
         if (!vehiculoDAO.existePlaca(placaAnterior, archivo)) {
             throw new IllegalArgumentException("No existe vehículo con placa: "
