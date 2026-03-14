@@ -14,37 +14,41 @@ import java.util.List;
 import java.util.Map;
 
 public class TicketService {
-    private TicketDAO       ticketDAO;
-    private List<Ticket>    tickets;
-    private PersonaService  personaService;
+
+    private TicketDAO ticketDAO;
+    private List<Ticket> tickets;
+    private PersonaService personaService;
     private VehiculoService vehiculoService;
 
     public TicketService(PersonaService personaService, VehiculoService vehiculoService) {
-        this.ticketDAO       = new TicketDAO();
-        this.personaService  = personaService;
+        this.ticketDAO = new TicketDAO();
+        this.personaService = personaService;
         this.vehiculoService = vehiculoService;
-        this.tickets         = cargarTicketsEnMemoria();
+        this.tickets = cargarTicketsEnMemoria();
     }
 
-  
     public String venderTicket(String cedulaPasajero, String placaVehiculo,
-                               String origen, String destino) {
+            String origen, String destino) {
 
         Pasajero pasajero = personaService.buscarPasajeroPorCedula(cedulaPasajero);
-        if (pasajero == null)
+        if (pasajero == null) {
             return "ERROR: Pasajero no encontrado.";
+        }
 
         Vehiculo vehiculo = vehiculoService.buscarVehiculoPorPlaca(placaVehiculo);
-        if (vehiculo == null)
+        if (vehiculo == null) {
             return "ERROR: Vehículo no encontrado.";
+        }
 
-        if (!vehiculo.tieneCupos())
+        if (!vehiculo.tieneCupos()) {
             return "ERROR: El vehículo " + placaVehiculo + " no tiene cupos disponibles.";
+        }
 
-        int    nuevoId = ticketDAO.generarNuevoId();
-        String fecha   = LocalDate.now().toString();
+        int nuevoId = ticketDAO.generarNuevoId();
+        String fecha = LocalDate.now().toString();
 
         Ticket ticket = new Ticket(nuevoId, pasajero, vehiculo, fecha, origen, destino);
+        ticket.setValorFinal(ticket.calcularTotal()); 
 
         vehiculo.agregarPasajero();
         vehiculoService.actualizarVehiculos();
@@ -53,32 +57,40 @@ public class TicketService {
         ticketDAO.guardar(ticket);
 
         return String.format("Ticket #%d vendido. Valor final: $%.0f", nuevoId, ticket.getValorFinal());
+
     }
 
-  
     public void listarTickets() {
         if (tickets.isEmpty()) {
             System.out.println("No hay tickets registrados.");
             return;
         }
-        for (Ticket t : tickets) t.imprimirDetalle();
+        for (Ticket t : tickets) {
+            t.imprimirDetalle();
+        }
     }
 
- 
     public double calcularTotalRecaudado() {
         double total = 0;
-        for (Ticket t : tickets) total += t.getValorFinal();
+        for (Ticket t : tickets) {
+            total += t.getValorFinal();
+        }
         return total;
     }
 
-  
     public void mostrarPasajerosPorTipo() {
         int regular = 0, estudiante = 0, adultoMayor = 0;
         for (Ticket t : tickets) {
             switch (t.getPasajero().getTipo()) {
-                case "ESTUDIANTE":   estudiante++;  break;
-                case "ADULTO_MAYOR": adultoMayor++; break;
-                default:             regular++;     break;
+                case "ESTUDIANTE":
+                    estudiante++;
+                    break;
+                case "ADULTO_MAYOR":
+                    adultoMayor++;
+                    break;
+                default:
+                    regular++;
+                    break;
             }
         }
         System.out.println("======= PASAJEROS POR TIPO =======");
@@ -88,7 +100,6 @@ public class TicketService {
         System.out.println("Total tickets: " + tickets.size());
         System.out.println("==================================");
     }
-
 
     public void vehiculoConMasTickets() {
         if (tickets.isEmpty()) {
@@ -101,9 +112,12 @@ public class TicketService {
             conteo.put(placa, conteo.getOrDefault(placa, 0) + 1);
         }
         String placaTop = null;
-        int    maxVal   = 0;
+        int maxVal = 0;
         for (Map.Entry<String, Integer> e : conteo.entrySet()) {
-            if (e.getValue() > maxVal) { maxVal = e.getValue(); placaTop = e.getKey(); }
+            if (e.getValue() > maxVal) {
+                maxVal = e.getValue();
+                placaTop = e.getKey();
+            }
         }
         System.out.println("=== VEHÍCULO CON MÁS TICKETS ===");
         System.out.println("Placa  : " + placaTop);
@@ -111,20 +125,18 @@ public class TicketService {
         System.out.println("================================");
     }
 
-
-
     private List<Ticket> cargarTicketsEnMemoria() {
-        List<Ticket>    lista = new ArrayList<>();
-        List<String[]>  datos = ticketDAO.cargarDatosTickets();
+        List<Ticket> lista = new ArrayList<>();
+        List<String[]> datos = ticketDAO.cargarDatosTickets();
 
         for (String[] fila : datos) {
             try {
-                int      id       = Integer.parseInt(fila[0]);
+                int id = Integer.parseInt(fila[0]);
                 Pasajero pasajero = personaService.buscarPasajeroPorCedula(fila[1]);
                 Vehiculo vehiculo = vehiculoService.buscarVehiculoPorPlaca(fila[2]);
-                String   fecha    = fila[3];
-                String   origen   = fila[4];
-                String   destino  = fila[5];
+                String fecha = fila[3];
+                String origen = fila[4];
+                String destino = fila[5];
 
                 if (pasajero != null && vehiculo != null) {
                     lista.add(new Ticket(id, pasajero, vehiculo, fecha, origen, destino));
@@ -136,6 +148,7 @@ public class TicketService {
         return lista;
     }
 
-    public List<Ticket> getTickets() { return tickets; }
+    public List<Ticket> getTickets() {
+        return tickets;
+    }
 }
-
