@@ -35,6 +35,10 @@ public class Conductor extends Persona {
     public void setCategoriaLicencia(String categoriaLicencia) {
         this.categoriaLicencia = categoriaLicencia;
     }
+    
+    public boolean tieneLicencia() {
+    return numeroLicencia != null && !numeroLicencia.trim().isEmpty();
+}
     @Override
     public void imprimirDetalle() {
         System.out.println("========== CONDUCTOR ==========");
