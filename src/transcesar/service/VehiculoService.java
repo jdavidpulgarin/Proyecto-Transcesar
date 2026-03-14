@@ -55,7 +55,21 @@ public class VehiculoService {
         return resultado;
     }
 
-   
+   private Vehiculo parsearVehiculo(String linea, String archivo) {
+    String[] d   = linea.split(";");
+    String placa = d[0];
+    String ruta  = d[1];
+    int ocupados = Integer.parseInt(d[3]);
+
+    Vehiculo v;
+    switch (archivo) {
+        case "buseta.txt":   v = new Buseta(placa, ruta);   break;
+        case "microbus.txt": v = new MicroBus(placa, ruta); break;
+        default:             v = new Bus(placa, ruta);      break;
+    }
+    for (int i = 0; i < ocupados; i++) v.agregarPasajero();
+    return v;
+}
     public List<String> listarVehiculos(String archivo) {
         List<String> lista = vehiculoDAO.listarTodos(archivo);
         if (lista.isEmpty()) {
