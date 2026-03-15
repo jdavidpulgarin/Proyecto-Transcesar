@@ -40,6 +40,8 @@ public class Menu {
                     + "9. Total Recaudado\n"
                     + "10. Pasajero Por Tipo\n"
                     + "11. Vehiculo Con Mas Tickets\n"
+                    + "-- Reportes --\n"
+                    + "12. Reportes\n"
                     + "0. Salir";
 
             String input = JOptionPane.showInputDialog(menu);
