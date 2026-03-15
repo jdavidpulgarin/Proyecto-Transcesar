@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import transcesar.service.ReglasNegocioService;
 
 public class TicketService {
 
@@ -48,7 +49,10 @@ public class TicketService {
         String fecha = LocalDate.now().toString();
 
         Ticket ticket = new Ticket(nuevoId, pasajero, vehiculo, fecha, origen, destino);
-        ticket.setValorFinal(ticket.calcularTotal()); 
+        ReglasNegocioService reglas = new ReglasNegocioService();
+        double valorFinal = reglas.calcularValorFinal(
+                vehiculo.getTarifaBase(), pasajero.calcularDescuento(), fecha);
+        ticket.setValorFinal(valorFinal);
 
         vehiculo.agregarPasajero();
         vehiculoService.actualizarVehiculos();
