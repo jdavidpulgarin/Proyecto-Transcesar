@@ -9,17 +9,20 @@ import transcesar.model.Ticket;
 import transcesar.service.PersonaService;
 import transcesar.service.TicketService;
 import transcesar.service.VehiculoService;
+import transcesar.service.ReglasNegocioService;
 
 public class Menu {
 
     private PersonaService personaService;
     private VehiculoService vehiculoService;
     private TicketService ticketService;
+    private ReglasNegocioService reglasNegocioService;
 
     public Menu() {
         personaService = new PersonaService();
         vehiculoService = new VehiculoService();
         ticketService = new TicketService(personaService, vehiculoService);
+        reglasNegocioService = new ReglasNegocioService(); 
     }
 
     public void iniciar() {
@@ -309,6 +312,14 @@ public class Menu {
         }
         String destino = JOptionPane.showInputDialog("Destino:");
         if (destino == null) {
+            return;
+        }
+
+        String fecha = java.time.LocalDate.now().toString();
+        String errorLimite = reglasNegocioService.validarLimiteTickets(
+                (ArrayList<Ticket>) ticketService.getTickets(), cedula, fecha);
+        if (errorLimite != null) {
+            JOptionPane.showMessageDialog(null, errorLimite);
             return;
         }
 
