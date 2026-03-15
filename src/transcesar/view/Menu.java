@@ -7,22 +7,25 @@ import transcesar.model.Buseta;
 import transcesar.model.MicroBus;
 import transcesar.model.Ticket;
 import transcesar.service.PersonaService;
+import transcesar.service.ReglasNegocioService;
+import transcesar.service.ReporteService;
 import transcesar.service.TicketService;
 import transcesar.service.VehiculoService;
-import transcesar.service.ReglasNegocioService;
 
 public class Menu {
 
     private PersonaService personaService;
     private VehiculoService vehiculoService;
     private TicketService ticketService;
+    private ReporteService reporteService;
     private ReglasNegocioService reglasNegocioService;
 
     public Menu() {
         personaService = new PersonaService();
         vehiculoService = new VehiculoService();
         ticketService = new TicketService(personaService, vehiculoService);
-        reglasNegocioService = new ReglasNegocioService(); 
+        reporteService = new ReporteService(ticketService);
+        reglasNegocioService = new ReglasNegocioService();
     }
 
     public void iniciar() {
@@ -93,6 +96,9 @@ public class Menu {
                 case 11:
                     vehiculomTickets();
                     break;
+                case 12:
+                    menuReportes();
+                    break;
                 case 0:
                     JOptionPane.showMessageDialog(null, "Saliendo....");
                     break;
@@ -105,14 +111,9 @@ public class Menu {
 
     private void registrarBuseta() {
         String placa = JOptionPane.showInputDialog("Placa de la Buseta:");
-        if (placa == null) {
-            return;
-        }
+        if (placa == null) return;
         String ruta = JOptionPane.showInputDialog("Ruta:");
-        if (ruta == null) {
-            return;
-        }
-
+        if (ruta == null) return;
         try {
             vehiculoService.registrarVehiculo(new Buseta(placa, ruta));
             JOptionPane.showMessageDialog(null, "Buseta registrada: " + placa);
@@ -123,14 +124,9 @@ public class Menu {
 
     private void registrarBus() {
         String placa = JOptionPane.showInputDialog("Placa del Bus:");
-        if (placa == null) {
-            return;
-        }
+        if (placa == null) return;
         String ruta = JOptionPane.showInputDialog("Ruta:");
-        if (ruta == null) {
-            return;
-        }
-
+        if (ruta == null) return;
         try {
             vehiculoService.registrarVehiculo(new Bus(placa, ruta));
             JOptionPane.showMessageDialog(null, "Bus registrado: " + placa);
@@ -141,14 +137,9 @@ public class Menu {
 
     private void registrarmicroBus() {
         String placa = JOptionPane.showInputDialog("Placa del micro bus:");
-        if (placa == null) {
-            return;
-        }
+        if (placa == null) return;
         String ruta = JOptionPane.showInputDialog("Ruta:");
-        if (ruta == null) {
-            return;
-        }
-
+        if (ruta == null) return;
         try {
             vehiculoService.registrarVehiculo(new MicroBus(placa, ruta));
             JOptionPane.showMessageDialog(null, "MicroBus registrado: " + placa);
@@ -159,13 +150,10 @@ public class Menu {
 
     private void listarVehiculos() {
         String texto = "=== VEHICULOS REGISTRADOS ===\n\n";
-
         ArrayList<String> busetas = (ArrayList<String>) vehiculoService.listarVehiculos("buseta.txt");
         ArrayList<String> buses = (ArrayList<String>) vehiculoService.listarVehiculos("bus.txt");
         ArrayList<String> micros = (ArrayList<String>) vehiculoService.listarVehiculos("microbus.txt");
-
         boolean hay = false;
-
         if (!busetas.isEmpty()) {
             texto = texto + "-- Busetas --\n";
             for (int i = 0; i < busetas.size(); i++) {
@@ -187,11 +175,9 @@ public class Menu {
             }
             hay = true;
         }
-
         if (!hay) {
             texto = texto + "(Sin vehiculos registrados)";
         }
-
         javax.swing.JTextArea area = new javax.swing.JTextArea(15, 40);
         area.setText(texto);
         JOptionPane.showMessageDialog(null, area, "Vehiculos", JOptionPane.INFORMATION_MESSAGE);
@@ -199,41 +185,24 @@ public class Menu {
 
     private void registrarConductor() {
         String cedula = JOptionPane.showInputDialog("Cedula:");
-        if (cedula == null) {
-            return;
-        }
+        if (cedula == null) return;
         String nombre = JOptionPane.showInputDialog("Nombre:");
-        if (nombre == null) {
-            return;
-        }
+        if (nombre == null) return;
         String apellido = JOptionPane.showInputDialog("Apellido:");
-        if (apellido == null) {
-            return;
-        }
+        if (apellido == null) return;
         String sexo = JOptionPane.showInputDialog("Sexo (M/F):");
-        if (sexo == null) {
-            return;
-        }
+        if (sexo == null) return;
         String edadStr = JOptionPane.showInputDialog("Edad:");
-        if (edadStr == null) {
-            return;
-        }
+        if (edadStr == null) return;
         String telefono = JOptionPane.showInputDialog("Telefono:");
-        if (telefono == null) {
-            return;
-        }
+        if (telefono == null) return;
         String licencia = JOptionPane.showInputDialog("Numero de licencia:");
-        if (licencia == null) {
-            return;
-        }
+        if (licencia == null) return;
         String[] cats = {"B1", "B2", "C1", "C2"};
         String categoria = (String) JOptionPane.showInputDialog(null,
                 "Categoria:", "Licencia",
                 JOptionPane.QUESTION_MESSAGE, null, cats, cats[0]);
-        if (categoria == null) {
-            return;
-        }
-
+        if (categoria == null) return;
         try {
             int edad = Integer.parseInt(edadStr);
             String resultado = personaService.registrarConductor(cedula, nombre,
@@ -246,47 +215,29 @@ public class Menu {
 
     private void registrarPasajero() {
         String cedula = JOptionPane.showInputDialog("Cedula:");
-        if (cedula == null) {
-            return;
-        }
+        if (cedula == null) return;
         String nombre = JOptionPane.showInputDialog("Nombre:");
-        if (nombre == null) {
-            return;
-        }
+        if (nombre == null) return;
         String apellido = JOptionPane.showInputDialog("Apellido:");
-        if (apellido == null) {
-            return;
-        }
+        if (apellido == null) return;
         String sexo = JOptionPane.showInputDialog("Sexo (M/F):");
-        if (sexo == null) {
-            return;
-        }
+        if (sexo == null) return;
         String edadStr = JOptionPane.showInputDialog("Edad:");
-        if (edadStr == null) {
-            return;
-        }
+        if (edadStr == null) return;
         String telefono = JOptionPane.showInputDialog("Telefono:");
-        if (telefono == null) {
-            return;
-        }
-
+        if (telefono == null) return;
         String[] tiposDisplay = {"Regular (0%)", "Estudiante (15%)", "Adulto Mayor (30%)"};
         String[] tiposValor = {"REGULAR", "ESTUDIANTE", "ADULTO_MAYOR"};
-
         String tipoElegido = (String) JOptionPane.showInputDialog(null,
                 "Tipo de pasajero:", "Tipo",
                 JOptionPane.QUESTION_MESSAGE, null, tiposDisplay, tiposDisplay[0]);
-        if (tipoElegido == null) {
-            return;
-        }
-
+        if (tipoElegido == null) return;
         String tipoFinal = "REGULAR";
         if (tipoElegido.equals("Estudiante (15%)")) {
             tipoFinal = "ESTUDIANTE";
         } else if (tipoElegido.equals("Adulto Mayor (30%)")) {
             tipoFinal = "ADULTO_MAYOR";
         }
-
         try {
             int edad = Integer.parseInt(edadStr);
             String resultado = personaService.registrarPasajero(cedula, nombre,
@@ -299,22 +250,15 @@ public class Menu {
 
     private void venderTickets() {
         String cedula = JOptionPane.showInputDialog("Cedula del pasajero:");
-        if (cedula == null) {
-            return;
-        }
+        if (cedula == null) return;
         String placa = JOptionPane.showInputDialog("Placa del vehiculo:");
-        if (placa == null) {
-            return;
-        }
+        if (placa == null) return;
         String origen = JOptionPane.showInputDialog("Origen:");
-        if (origen == null) {
-            return;
-        }
+        if (origen == null) return;
         String destino = JOptionPane.showInputDialog("Destino:");
-        if (destino == null) {
-            return;
-        }
+        if (destino == null) return;
 
+        // Validar limite de 3 tickets por dia
         String fecha = java.time.LocalDate.now().toString();
         String errorLimite = reglasNegocioService.validarLimiteTickets(
                 (ArrayList<Ticket>) ticketService.getTickets(), cedula, fecha);
@@ -329,9 +273,7 @@ public class Menu {
 
     private void listarTickets() {
         String texto = "=== TICKETS VENDIDOS ===\n\n";
-
         ArrayList<Ticket> lista = (ArrayList<Ticket>) ticketService.getTickets();
-
         if (lista.isEmpty()) {
             texto = texto + "(Sin tickets registrados)";
         } else {
@@ -344,7 +286,6 @@ public class Menu {
                         + " | $" + (int) t.getValorFinal() + "\n";
             }
         }
-
         javax.swing.JTextArea area = new javax.swing.JTextArea(15, 40);
         area.setText(texto);
         JOptionPane.showMessageDialog(null, area, "Tickets", JOptionPane.INFORMATION_MESSAGE);
@@ -360,7 +301,6 @@ public class Menu {
         int regulares = 0;
         int estudiantes = 0;
         int adultos = 0;
-
         for (int i = 0; i < lista.size(); i++) {
             Ticket t = lista.get(i);
             String tipo = t.getPasajero().getTipo();
@@ -372,12 +312,10 @@ public class Menu {
                 regulares++;
             }
         }
-
         String texto = "=== PASAJEROS POR TIPO ===\n\n"
                 + "Regular:      " + regulares + "\n"
                 + "Estudiante:   " + estudiantes + "\n"
                 + "Adulto Mayor: " + adultos + "\n";
-
         javax.swing.JTextArea area = new javax.swing.JTextArea(6, 30);
         area.setText(texto);
         JOptionPane.showMessageDialog(null, area, "Pasajeros por Tipo", JOptionPane.INFORMATION_MESSAGE);
@@ -385,15 +323,12 @@ public class Menu {
 
     private void vehiculomTickets() {
         ArrayList<Ticket> lista = (ArrayList<Ticket>) ticketService.getTickets();
-
         if (lista.isEmpty()) {
             JOptionPane.showMessageDialog(null, "VEHICULO CON MAS TICKETS\n(Sin datos aun)");
             return;
         }
-
         String placaTop = "";
         int maxTickets = 0;
-
         for (int i = 0; i < lista.size(); i++) {
             String placa = lista.get(i).getVehiculo().getPlaca();
             int contador = 0;
@@ -407,8 +342,94 @@ public class Menu {
                 placaTop = placa;
             }
         }
-
         JOptionPane.showMessageDialog(null,
                 "VEHICULO CON MAS TICKETS\nPlaca: " + placaTop + " - " + maxTickets + " ticket(s)");
+    }
+
+    private void menuReportes() {
+        int opcion = -1;
+        do {
+            String menu = "REPORTES\n"
+                    + "1. Tickets por fecha\n"
+                    + "2. Tickets por tipo de vehiculo\n"
+                    + "3. Tickets por tipo de pasajero\n"
+                    + "4. Resumen del dia de hoy\n"
+                    + "0. Volver";
+
+            String input = JOptionPane.showInputDialog(menu);
+            if (input == null) break;
+
+            try {
+                opcion = Integer.parseInt(input);
+            } catch (NumberFormatException e) {
+                JOptionPane.showMessageDialog(null, "Ingrese un numero valido");
+                continue;
+            }
+
+            switch (opcion) {
+                case 1:
+                    reportePorFecha();
+                    break;
+                case 2:
+                    reportePorTipoVehiculo();
+                    break;
+                case 3:
+                    reportePorTipoPasajero();
+                    break;
+                case 4:
+                    resumenHoy();
+                    break;
+                case 0:
+                    break;
+                default:
+                    JOptionPane.showMessageDialog(null, "Opcion invalida");
+                    break;
+            }
+        } while (opcion != 0);
+    }
+
+    private void reportePorFecha() {
+        String fecha = JOptionPane.showInputDialog("Ingrese la fecha (YYYY-MM-DD):");
+        if (fecha == null) return;
+        String texto = reporteService.reportePorFecha(fecha);
+        javax.swing.JTextArea area = new javax.swing.JTextArea(15, 40);
+        area.setText(texto);
+        JOptionPane.showMessageDialog(null, area, "Reporte por fecha", JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    private void reportePorTipoVehiculo() {
+        String[] tipos = {"Buseta", "Bus", "MicroBus"};
+        String tipoElegido = (String) JOptionPane.showInputDialog(null,
+                "Tipo de vehiculo:", "Filtro",
+                JOptionPane.QUESTION_MESSAGE, null, tipos, tipos[0]);
+        if (tipoElegido == null) return;
+        String texto = reporteService.reportePorTipoVehiculo(tipoElegido);
+        javax.swing.JTextArea area = new javax.swing.JTextArea(15, 40);
+        area.setText(texto);
+        JOptionPane.showMessageDialog(null, area, "Reporte por vehiculo", JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    private void reportePorTipoPasajero() {
+        String[] tiposDisplay = {"Regular", "Estudiante", "Adulto Mayor"};
+        String[] tiposValor = {"REGULAR", "ESTUDIANTE", "ADULTO_MAYOR"};
+        String tipoElegido = (String) JOptionPane.showInputDialog(null,
+                "Tipo de pasajero:", "Filtro",
+                JOptionPane.QUESTION_MESSAGE, null, tiposDisplay, tiposDisplay[0]);
+        if (tipoElegido == null) return;
+        String tipoValor = "REGULAR";
+        if (tipoElegido.equals("Estudiante")) {
+            tipoValor = "ESTUDIANTE";
+        } else if (tipoElegido.equals("Adulto Mayor")) {
+            tipoValor = "ADULTO_MAYOR";
+        }
+        String texto = reporteService.reportePorTipoPasajero(tipoValor);
+        javax.swing.JTextArea area = new javax.swing.JTextArea(15, 40);
+        area.setText(texto);
+        JOptionPane.showMessageDialog(null, area, "Reporte por pasajero", JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    private void resumenHoy() {
+        String texto = reporteService.resumenHoy();
+        JOptionPane.showMessageDialog(null, texto, "Resumen del dia", JOptionPane.INFORMATION_MESSAGE);
     }
 }
