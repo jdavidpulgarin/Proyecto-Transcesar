@@ -52,6 +52,8 @@ public class Menu {
                     + "11. Vehiculo Con Mas Tickets\n"
                     + "-- Reportes --\n"
                     + "12. Reportes\n"
+                    + "-- Reservas --\n"
+                    + "13. Reservas\n"
                     + "0. Salir";
 
             String input = JOptionPane.showInputDialog(menu);
@@ -103,6 +105,9 @@ public class Menu {
                 case 12:
                     menuReportes();
                     break;
+                case 13:
+                    menuReservas();
+                    break;
                 case 0:
                     JOptionPane.showMessageDialog(null, "Saliendo....");
                     break;
@@ -115,9 +120,13 @@ public class Menu {
 
     private void registrarBuseta() {
         String placa = JOptionPane.showInputDialog("Placa de la Buseta:");
-        if (placa == null) return;
+        if (placa == null) {
+            return;
+        }
         String ruta = JOptionPane.showInputDialog("Ruta:");
-        if (ruta == null) return;
+        if (ruta == null) {
+            return;
+        }
         try {
             vehiculoService.registrarVehiculo(new Buseta(placa, ruta));
             JOptionPane.showMessageDialog(null, "Buseta registrada: " + placa);
@@ -128,9 +137,13 @@ public class Menu {
 
     private void registrarBus() {
         String placa = JOptionPane.showInputDialog("Placa del Bus:");
-        if (placa == null) return;
+        if (placa == null) {
+            return;
+        }
         String ruta = JOptionPane.showInputDialog("Ruta:");
-        if (ruta == null) return;
+        if (ruta == null) {
+            return;
+        }
         try {
             vehiculoService.registrarVehiculo(new Bus(placa, ruta));
             JOptionPane.showMessageDialog(null, "Bus registrado: " + placa);
@@ -141,9 +154,13 @@ public class Menu {
 
     private void registrarmicroBus() {
         String placa = JOptionPane.showInputDialog("Placa del micro bus:");
-        if (placa == null) return;
+        if (placa == null) {
+            return;
+        }
         String ruta = JOptionPane.showInputDialog("Ruta:");
-        if (ruta == null) return;
+        if (ruta == null) {
+            return;
+        }
         try {
             vehiculoService.registrarVehiculo(new MicroBus(placa, ruta));
             JOptionPane.showMessageDialog(null, "MicroBus registrado: " + placa);
@@ -189,24 +206,40 @@ public class Menu {
 
     private void registrarConductor() {
         String cedula = JOptionPane.showInputDialog("Cedula:");
-        if (cedula == null) return;
+        if (cedula == null) {
+            return;
+        }
         String nombre = JOptionPane.showInputDialog("Nombre:");
-        if (nombre == null) return;
+        if (nombre == null) {
+            return;
+        }
         String apellido = JOptionPane.showInputDialog("Apellido:");
-        if (apellido == null) return;
+        if (apellido == null) {
+            return;
+        }
         String sexo = JOptionPane.showInputDialog("Sexo (M/F):");
-        if (sexo == null) return;
+        if (sexo == null) {
+            return;
+        }
         String edadStr = JOptionPane.showInputDialog("Edad:");
-        if (edadStr == null) return;
+        if (edadStr == null) {
+            return;
+        }
         String telefono = JOptionPane.showInputDialog("Telefono:");
-        if (telefono == null) return;
+        if (telefono == null) {
+            return;
+        }
         String licencia = JOptionPane.showInputDialog("Numero de licencia:");
-        if (licencia == null) return;
+        if (licencia == null) {
+            return;
+        }
         String[] cats = {"B1", "B2", "C1", "C2"};
         String categoria = (String) JOptionPane.showInputDialog(null,
                 "Categoria:", "Licencia",
                 JOptionPane.QUESTION_MESSAGE, null, cats, cats[0]);
-        if (categoria == null) return;
+        if (categoria == null) {
+            return;
+        }
         try {
             int edad = Integer.parseInt(edadStr);
             String resultado = personaService.registrarConductor(cedula, nombre,
@@ -219,23 +252,37 @@ public class Menu {
 
     private void registrarPasajero() {
         String cedula = JOptionPane.showInputDialog("Cedula:");
-        if (cedula == null) return;
+        if (cedula == null) {
+            return;
+        }
         String nombre = JOptionPane.showInputDialog("Nombre:");
-        if (nombre == null) return;
+        if (nombre == null) {
+            return;
+        }
         String apellido = JOptionPane.showInputDialog("Apellido:");
-        if (apellido == null) return;
+        if (apellido == null) {
+            return;
+        }
         String sexo = JOptionPane.showInputDialog("Sexo (M/F):");
-        if (sexo == null) return;
+        if (sexo == null) {
+            return;
+        }
         String edadStr = JOptionPane.showInputDialog("Edad:");
-        if (edadStr == null) return;
+        if (edadStr == null) {
+            return;
+        }
         String telefono = JOptionPane.showInputDialog("Telefono:");
-        if (telefono == null) return;
+        if (telefono == null) {
+            return;
+        }
         String[] tiposDisplay = {"Regular (0%)", "Estudiante (15%)", "Adulto Mayor (30%)"};
         String[] tiposValor = {"REGULAR", "ESTUDIANTE", "ADULTO_MAYOR"};
         String tipoElegido = (String) JOptionPane.showInputDialog(null,
                 "Tipo de pasajero:", "Tipo",
                 JOptionPane.QUESTION_MESSAGE, null, tiposDisplay, tiposDisplay[0]);
-        if (tipoElegido == null) return;
+        if (tipoElegido == null) {
+            return;
+        }
         String tipoFinal = "REGULAR";
         if (tipoElegido.equals("Estudiante (15%)")) {
             tipoFinal = "ESTUDIANTE";
@@ -254,13 +301,21 @@ public class Menu {
 
     private void venderTickets() {
         String cedula = JOptionPane.showInputDialog("Cedula del pasajero:");
-        if (cedula == null) return;
+        if (cedula == null) {
+            return;
+        }
         String placa = JOptionPane.showInputDialog("Placa del vehiculo:");
-        if (placa == null) return;
+        if (placa == null) {
+            return;
+        }
         String origen = JOptionPane.showInputDialog("Origen:");
-        if (origen == null) return;
+        if (origen == null) {
+            return;
+        }
         String destino = JOptionPane.showInputDialog("Destino:");
-        if (destino == null) return;
+        if (destino == null) {
+            return;
+        }
 
         // Validar limite de 3 tickets por dia
         String fecha = java.time.LocalDate.now().toString();
@@ -361,7 +416,9 @@ public class Menu {
                     + "0. Volver";
 
             String input = JOptionPane.showInputDialog(menu);
-            if (input == null) break;
+            if (input == null) {
+                break;
+            }
 
             try {
                 opcion = Integer.parseInt(input);
@@ -394,7 +451,9 @@ public class Menu {
 
     private void reportePorFecha() {
         String fecha = JOptionPane.showInputDialog("Ingrese la fecha (YYYY-MM-DD):");
-        if (fecha == null) return;
+        if (fecha == null) {
+            return;
+        }
         String texto = reporteService.reportePorFecha(fecha);
         javax.swing.JTextArea area = new javax.swing.JTextArea(15, 40);
         area.setText(texto);
@@ -406,7 +465,9 @@ public class Menu {
         String tipoElegido = (String) JOptionPane.showInputDialog(null,
                 "Tipo de vehiculo:", "Filtro",
                 JOptionPane.QUESTION_MESSAGE, null, tipos, tipos[0]);
-        if (tipoElegido == null) return;
+        if (tipoElegido == null) {
+            return;
+        }
         String texto = reporteService.reportePorTipoVehiculo(tipoElegido);
         javax.swing.JTextArea area = new javax.swing.JTextArea(15, 40);
         area.setText(texto);
@@ -419,7 +480,9 @@ public class Menu {
         String tipoElegido = (String) JOptionPane.showInputDialog(null,
                 "Tipo de pasajero:", "Filtro",
                 JOptionPane.QUESTION_MESSAGE, null, tiposDisplay, tiposDisplay[0]);
-        if (tipoElegido == null) return;
+        if (tipoElegido == null) {
+            return;
+        }
         String tipoValor = "REGULAR";
         if (tipoElegido.equals("Estudiante")) {
             tipoValor = "ESTUDIANTE";
