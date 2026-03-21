@@ -21,5 +21,13 @@ public class Reserva {
     public static final String CONVERTIDA = "CONVERTIDA";
     public static final String CANCELADA = "CANCELADA";
 
-    
+    public Reserva(String codigo, Pasajero pasajero, Vehiculo vehiculo,
+            String fechaCreacion, String fechaViaje) {
+        this.codigo = codigo;
+        this.pasajero = pasajero;
+        this.vehiculo = vehiculo;
+        this.fechaCreacion = fechaCreacion;
+        this.fechaViaje = fechaViaje;
+        this.estado = ACTIVA;
+}
 }
