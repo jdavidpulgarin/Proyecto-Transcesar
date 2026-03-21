@@ -640,4 +640,10 @@ public class Menu {
         String resultado = reservaService.convertirEnTicket(codigo, origen, destino);
         JOptionPane.showMessageDialog(null, resultado);
     }
+
+    private void verificarReservasVencidas() {
+        int canceladas = reservaService.verificarReservasVencidas();
+        JOptionPane.showMessageDialog(null,
+                "Verificacion completada.\nReservas canceladas por vencimiento: " + canceladas);
+    }
 }
