@@ -30,5 +30,23 @@ public class ReservaDAO {
             System.out.println("ERROR al guardar reserva: " + e.getMessage());
         }
 }
+     public void actualizarEstado(String codigo, String nuevoEstado) {
+        List<String> lineas = cargarLineas();
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(ARCHIVO_RESERVAS, false))) {
+            for (int i = 0; i < lineas.size(); i++) {
+                String linea = lineas.get(i);
+                String[] partes = linea.split(";");
+                if (partes.length == 6 && partes[0].equals(codigo)) {
+                    bw.write(partes[0] + ";" + partes[1] + ";" + partes[2] + ";"
+                            + partes[3] + ";" + partes[4] + ";" + nuevoEstado);
+                } else {
+                    bw.write(linea);
+                }
+                bw.newLine();
+            }
+        } catch (IOException e) {
+            System.out.println("ERROR al actualizar reserva: " + e.getMessage());
+        }
+    }
 }
      
