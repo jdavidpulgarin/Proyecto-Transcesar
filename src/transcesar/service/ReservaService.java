@@ -137,3 +137,22 @@ public class ReservaService {
         }
         return "ERROR: No se encontro una reserva con el codigo " + codigo;
     }
+     
+public ArrayList<Reserva> listarReservasActivas() {
+        ArrayList<Reserva> activas = new ArrayList<>();
+        for (int i = 0; i < reservas.size(); i++) {
+            if (reservas.get(i).getEstado().equals(Reserva.ACTIVA)) {
+                activas.add(reservas.get(i));
+            }
+        }
+        return activas;
+    }
+ public ArrayList<Reserva> historialPasajero(String cedula) {
+        ArrayList<Reserva> historial = new ArrayList<>();
+        for (int i = 0; i < reservas.size(); i++) {
+            if (reservas.get(i).getPasajero().getCedula().equals(cedula)) {
+                historial.add(reservas.get(i));
+            }
+        }
+        return historial;
+    }
