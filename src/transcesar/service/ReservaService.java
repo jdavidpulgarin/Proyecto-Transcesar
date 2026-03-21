@@ -51,3 +51,51 @@ public class ReservaService {
             }
         }
     }
+  private String generarCodigo() {
+        int numero = reservaDAO.contarReservas() + 1;
+        return "R" + String.format("%03d", numero);
+    }
+  public String crearReserva(String cedulaPasajero, String placaVehiculo, String fechaViaje) {
+        Pasajero pasajero = personaService.buscarPasajeroPorCedula(cedulaPasajero);
+        if (pasajero == null) {
+            return "ERROR: Pasajero no encontrado.";
+        }
+
+        Vehiculo vehiculo = vehiculoService.buscarVehiculoPorPlaca(placaVehiculo);
+        if (vehiculo == null) {
+            return "ERROR: Vehiculo no encontrado.";
+        }
+
+       
+        for (int i = 0; i < reservas.size(); i++) {
+            Reserva r = reservas.get(i);
+            if (r.getEstado().equals(Reserva.ACTIVA)
+                    && r.getPasajero().getCedula().equals(cedulaPasajero)
+                    && r.getVehiculo().getPlaca().equals(placaVehiculo)
+                    && r.getFechaViaje().equals(fechaViaje)) {
+                return "ERROR: El pasajero ya tiene una reserva activa para ese vehiculo y fecha.";
+            }
+        }
+
+        int cuposOcupados = vehiculo.getPasajerosActuales();
+        for (int i = 0; i < reservas.size(); i++) {
+            Reserva r = reservas.get(i);
+            if (r.getEstado().equals(Reserva.ACTIVA)
+                    && r.getVehiculo().getPlaca().equals(placaVehiculo)) {
+                cuposOcupados++;
+            }
+        }
+        if (cuposOcupados >= vehiculo.getCapacidadMaxima()) {
+            return "ERROR: El vehiculo no tiene cupos disponibles para reservar.";
+        }
+
+        String fechaCreacion = LocalDateTime.now()
+                .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+        String codigo = generarCodigo();
+
+        Reserva nueva = new Reserva(codigo, pasajero, vehiculo, fechaCreacion, fechaViaje);
+        reservas.add(nueva);
+        reservaDAO.guardar(nueva);
+
+        return "Reserva creada exitosamente. Codigo: " + codigo;
+    }
