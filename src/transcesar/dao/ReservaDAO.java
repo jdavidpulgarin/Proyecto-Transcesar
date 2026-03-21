@@ -17,4 +17,18 @@ import java.util.List;
 
 public class ReservaDAO {
     private static final String ARCHIVO_RESERVAS = "reservas.txt";
+     public void guardar(Reserva r) {
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(ARCHIVO_RESERVAS, true))) {
+            bw.write(r.getCodigo() + ";"
+                    + r.getPasajero().getCedula() + ";"
+                    + r.getVehiculo().getPlaca() + ";"
+                    + r.getFechaCreacion() + ";"
+                    + r.getFechaViaje() + ";"
+                    + r.getEstado());
+            bw.newLine();
+        } catch (IOException e) {
+            System.out.println("ERROR al guardar reserva: " + e.getMessage());
+        }
 }
+}
+     
