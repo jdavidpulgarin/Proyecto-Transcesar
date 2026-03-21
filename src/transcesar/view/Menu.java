@@ -11,6 +11,8 @@ import transcesar.service.ReglasNegocioService;
 import transcesar.service.ReporteService;
 import transcesar.service.TicketService;
 import transcesar.service.VehiculoService;
+import transcesar.model.Reserva;
+import transcesar.service.ReservaService;
 
 public class Menu {
 
@@ -19,6 +21,7 @@ public class Menu {
     private TicketService ticketService;
     private ReporteService reporteService;
     private ReglasNegocioService reglasNegocioService;
+    private ReservaService reservaService;
 
     public Menu() {
         personaService = new PersonaService();
@@ -26,6 +29,7 @@ public class Menu {
         ticketService = new TicketService(personaService, vehiculoService);
         reporteService = new ReporteService(ticketService);
         reglasNegocioService = new ReglasNegocioService();
+        reservaService = new ReservaService(personaService, vehiculoService, ticketService);
     }
 
     public void iniciar() {
