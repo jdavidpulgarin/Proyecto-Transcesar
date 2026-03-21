@@ -48,48 +48,47 @@ public class VehiculoService {
         System.out.println(" Vehículo registrado exitosamente.");
     }
 
-    public Vehiculo buscarVehiculoPorPlaca(String placa) {
-        String linea = vehiculoDAO.buscarPorPlaca(placa, "buseta.txt");
-        if (linea != null) {
-            String[] partes = linea.split(";");
-            return new Buseta(partes[0], partes[1]);
-        }
-        linea = vehiculoDAO.buscarPorPlaca(placa, "microbus.txt");
-        if (linea != null) {
-            String[] partes = linea.split(";");
-            return new MicroBus(partes[0], partes[1]);
-        }
-        linea = vehiculoDAO.buscarPorPlaca(placa, "bus.txt");
-        if (linea != null) {
-            String[] partes = linea.split(";");
-            return new Bus(partes[0], partes[1]);
-        }
-        return null;
+   public Vehiculo buscarVehiculoPorPlaca(String placa) {
+    String linea = vehiculoDAO.buscarPorPlaca(placa, "buseta.txt");
+    if (linea != null) {
+        return parsearVehiculo(linea, "buseta.txt");
     }
+    linea = vehiculoDAO.buscarPorPlaca(placa, "microbus.txt");
+    if (linea != null) {
+        return parsearVehiculo(linea, "microbus.txt");
+    }
+    linea = vehiculoDAO.buscarPorPlaca(placa, "bus.txt");
+    if (linea != null) {
+        return parsearVehiculo(linea, "bus.txt");
+    }
+    return null;
+}
 
     private Vehiculo parsearVehiculo(String linea, String archivo) {
-        String[] d = linea.split(";");
-        String placa = d[0];
-        String ruta = d[1];
-        int ocupados = (int) Double.parseDouble(d[3]);
-
-        Vehiculo v;
-        switch (archivo) {
-            case "buseta.txt":
-                v = new Buseta(placa, ruta);
-                break;
-            case "microbus.txt":
-                v = new MicroBus(placa, ruta);
-                break;
-            default:
-                v = new Bus(placa, ruta);
-                break;
-        }
-        for (int i = 0; i < ocupados; i++) {
-            v.agregarPasajero();
-        }
-        return v;
+    String[] d = linea.split(";");
+    String placa = d[0];
+    String ruta = d[1];
+    int ocupados = 0;
+    if (d.length >= 5) {
+        ocupados = (int) Double.parseDouble(d[4]);
     }
+    Vehiculo v;
+    switch (archivo) {
+        case "buseta.txt":
+            v = new Buseta(placa, ruta);
+            break;
+        case "microbus.txt":
+            v = new MicroBus(placa, ruta);
+            break;
+        default:
+            v = new Bus(placa, ruta);
+            break;
+    }
+    for (int i = 0; i < ocupados; i++) {
+        v.agregarPasajero();
+    }
+    return v;
+}
 
     public List<String> listarVehiculos(String archivo) {
         List<String> lista = vehiculoDAO.listarTodos(archivo);
