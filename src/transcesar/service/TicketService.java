@@ -143,7 +143,9 @@ public class TicketService {
                 String destino = fila[5];
 
                 if (pasajero != null && vehiculo != null) {
-                    lista.add(new Ticket(id, pasajero, vehiculo, fecha, origen, destino));
+                    Ticket t = new Ticket(id, pasajero, vehiculo, fecha, origen, destino);
+                    t.setValorFinal(Double.parseDouble(fila[6]));
+                    lista.add(t);
                 }
             } catch (Exception e) {
                 System.out.println("Advertencia: no se pudo cargar un ticket del archivo.");
