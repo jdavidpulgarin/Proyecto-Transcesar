@@ -99,3 +99,41 @@ public class ReservaService {
 
         return "Reserva creada exitosamente. Codigo: " + codigo;
     }
+   public String cancelarReserva(String codigo) {
+        for (int i = 0; i < reservas.size(); i++) {
+            Reserva r = reservas.get(i);
+            if (r.getCodigo().equals(codigo)) {
+                if (!r.getEstado().equals(Reserva.ACTIVA)) {
+                    return "ERROR: Solo se pueden cancelar reservas activas.";
+                }
+                r.setEstado(Reserva.CANCELADA);
+                reservaDAO.actualizarEstado(codigo, Reserva.CANCELADA);
+                return "Reserva " + codigo + " cancelada exitosamente.";
+            }
+        }
+        return "ERROR: No se encontro una reserva con el codigo " + codigo;
+    }
+     public String convertirEnTicket(String codigo, String origen, String destino) {
+        for (int i = 0; i < reservas.size(); i++) {
+            Reserva r = reservas.get(i);
+            if (r.getCodigo().equals(codigo)) {
+                if (!r.getEstado().equals(Reserva.ACTIVA)) {
+                    return "ERROR: Solo se pueden convertir reservas activas.";
+                }
+               
+                String resultado = ticketService.venderTicket(
+                        r.getPasajero().getCedula(),
+                        r.getVehiculo().getPlaca(),
+                        origen, destino);
+
+                if (resultado.startsWith("ERROR")) {
+                    return resultado;
+                }
+
+                r.setEstado(Reserva.CONVERTIDA);
+                reservaDAO.actualizarEstado(codigo, Reserva.CONVERTIDA);
+                return "Reserva convertida en ticket.\n" + resultado;
+            }
+        }
+        return "ERROR: No se encontro una reserva con el codigo " + codigo;
+    }
