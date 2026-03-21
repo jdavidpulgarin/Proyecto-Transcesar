@@ -51,4 +51,15 @@ public class Reserva {
     public void setEstado(String estado) {
         this.estado = estado;
     }
+     public void imprimirDetalle() {
+        System.out.println("========== RESERVA ==========");
+        System.out.println("Codigo      : " + codigo);
+        System.out.println("Pasajero    : " + pasajero.getNombreCompleto());
+        System.out.println("Cedula      : " + pasajero.getCedula());
+        System.out.println("Vehiculo    : " + vehiculo.getPlaca());
+        System.out.println("Fecha creada: " + fechaCreacion);
+        System.out.println("Fecha viaje : " + fechaViaje);
+        System.out.println("Estado      : " + estado);
+        System.out.println("=============================");
+    }
 }
