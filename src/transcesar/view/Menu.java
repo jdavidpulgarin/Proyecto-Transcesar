@@ -577,4 +577,25 @@ public class Menu {
         String resultado = reservaService.cancelarReserva(codigo);
         JOptionPane.showMessageDialog(null, resultado);
     }
+
+    private void listarReservasActivas() {
+        ArrayList<Reserva> lista = reservaService.listarReservasActivas();
+        String texto = "=== RESERVAS ACTIVAS ===\n\n";
+
+        if (lista.isEmpty()) {
+            texto = texto + "(Sin reservas activas)";
+        } else {
+            for (int i = 0; i < lista.size(); i++) {
+                Reserva r = lista.get(i);
+                texto = texto + "Codigo: " + r.getCodigo()
+                        + " | " + r.getPasajero().getNombreCompleto()
+                        + " | Vehiculo: " + r.getVehiculo().getPlaca()
+                        + " | Viaje: " + r.getFechaViaje() + "\n";
+            }
+        }
+
+        javax.swing.JTextArea area = new javax.swing.JTextArea(15, 40);
+        area.setText(texto);
+        JOptionPane.showMessageDialog(null, area, "Reservas activas", JOptionPane.INFORMATION_MESSAGE);
+    }
 }
