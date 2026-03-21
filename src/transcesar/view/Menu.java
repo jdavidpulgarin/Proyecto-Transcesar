@@ -598,4 +598,29 @@ public class Menu {
         area.setText(texto);
         JOptionPane.showMessageDialog(null, area, "Reservas activas", JOptionPane.INFORMATION_MESSAGE);
     }
+
+    private void historialReservasPasajero() {
+        String cedula = JOptionPane.showInputDialog("Cedula del pasajero:");
+        if (cedula == null) {
+            return;
+        }
+        ArrayList<Reserva> lista = reservaService.historialPasajero(cedula);
+        String texto = "=== HISTORIAL DE RESERVAS ===\n\n";
+
+        if (lista.isEmpty()) {
+            texto = texto + "(Sin reservas para ese pasajero)";
+        } else {
+            for (int i = 0; i < lista.size(); i++) {
+                Reserva r = lista.get(i);
+                texto = texto + "Codigo: " + r.getCodigo()
+                        + " | Vehiculo: " + r.getVehiculo().getPlaca()
+                        + " | Viaje: " + r.getFechaViaje()
+                        + " | Estado: " + r.getEstado() + "\n";
+            }
+        }
+
+        javax.swing.JTextArea area = new javax.swing.JTextArea(15, 40);
+        area.setText(texto);
+        JOptionPane.showMessageDialog(null, area, "Historial reservas", JOptionPane.INFORMATION_MESSAGE);
+    }
 }
