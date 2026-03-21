@@ -1,6 +1,5 @@
 
 package transcesar.service;
-
 import transcesar.dao.ReservaDAO;
 import transcesar.model.Reserva;
 import transcesar.model.Pasajero;
@@ -28,9 +27,8 @@ public class ReservaService {
         cargarReservasEnMemoria();
         verificarReservasVencidas();
     }
-}
 
-  private void cargarReservasEnMemoria() {
+    private void cargarReservasEnMemoria() {
         List<String[]> datos = reservaDAO.cargarDatosReservas();
         for (int i = 0; i < datos.size(); i++) {
             String[] fila = datos.get(i);
@@ -51,11 +49,13 @@ public class ReservaService {
             }
         }
     }
-  private String generarCodigo() {
+
+    private String generarCodigo() {
         int numero = reservaDAO.contarReservas() + 1;
         return "R" + String.format("%03d", numero);
     }
-  public String crearReserva(String cedulaPasajero, String placaVehiculo, String fechaViaje) {
+
+    public String crearReserva(String cedulaPasajero, String placaVehiculo, String fechaViaje) {
         Pasajero pasajero = personaService.buscarPasajeroPorCedula(cedulaPasajero);
         if (pasajero == null) {
             return "ERROR: Pasajero no encontrado.";
@@ -66,7 +66,8 @@ public class ReservaService {
             return "ERROR: Vehiculo no encontrado.";
         }
 
-       
+        // Regla: un pasajero no puede tener mas de una reserva activa
+        // para el mismo vehiculo en la misma fecha
         for (int i = 0; i < reservas.size(); i++) {
             Reserva r = reservas.get(i);
             if (r.getEstado().equals(Reserva.ACTIVA)
@@ -77,6 +78,7 @@ public class ReservaService {
             }
         }
 
+     
         int cuposOcupados = vehiculo.getPasajerosActuales();
         for (int i = 0; i < reservas.size(); i++) {
             Reserva r = reservas.get(i);
@@ -99,7 +101,8 @@ public class ReservaService {
 
         return "Reserva creada exitosamente. Codigo: " + codigo;
     }
-   public String cancelarReserva(String codigo) {
+
+    public String cancelarReserva(String codigo) {
         for (int i = 0; i < reservas.size(); i++) {
             Reserva r = reservas.get(i);
             if (r.getCodigo().equals(codigo)) {
@@ -113,7 +116,8 @@ public class ReservaService {
         }
         return "ERROR: No se encontro una reserva con el codigo " + codigo;
     }
-     public String convertirEnTicket(String codigo, String origen, String destino) {
+
+    public String convertirEnTicket(String codigo, String origen, String destino) {
         for (int i = 0; i < reservas.size(); i++) {
             Reserva r = reservas.get(i);
             if (r.getCodigo().equals(codigo)) {
@@ -137,8 +141,8 @@ public class ReservaService {
         }
         return "ERROR: No se encontro una reserva con el codigo " + codigo;
     }
-     
-public ArrayList<Reserva> listarReservasActivas() {
+
+    public ArrayList<Reserva> listarReservasActivas() {
         ArrayList<Reserva> activas = new ArrayList<>();
         for (int i = 0; i < reservas.size(); i++) {
             if (reservas.get(i).getEstado().equals(Reserva.ACTIVA)) {
@@ -147,7 +151,8 @@ public ArrayList<Reserva> listarReservasActivas() {
         }
         return activas;
     }
- public ArrayList<Reserva> historialPasajero(String cedula) {
+
+    public ArrayList<Reserva> historialPasajero(String cedula) {
         ArrayList<Reserva> historial = new ArrayList<>();
         for (int i = 0; i < reservas.size(); i++) {
             if (reservas.get(i).getPasajero().getCedula().equals(cedula)) {
@@ -156,3 +161,32 @@ public ArrayList<Reserva> listarReservasActivas() {
         }
         return historial;
     }
+
+    public int verificarReservasVencidas() {
+        int canceladas = 0;
+        LocalDateTime ahora = LocalDateTime.now();
+        DateTimeFormatter formato = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
+        for (int i = 0; i < reservas.size(); i++) {
+            Reserva r = reservas.get(i);
+            if (r.getEstado().equals(Reserva.ACTIVA)) {
+                try {
+                    LocalDateTime fechaCreacion = LocalDateTime.parse(r.getFechaCreacion(), formato);
+                    long horas = java.time.Duration.between(fechaCreacion, ahora).toHours();
+                    if (horas > 24) {
+                        r.setEstado(Reserva.CANCELADA);
+                        reservaDAO.actualizarEstado(r.getCodigo(), Reserva.CANCELADA);
+                        canceladas++;
+                    }
+                } catch (Exception e) {
+                    System.out.println("Advertencia: no se pudo verificar la reserva " + r.getCodigo());
+                }
+            }
+        }
+        return canceladas;
+    }
+
+    public ArrayList<Reserva> getReservas() {
+        return reservas;
+    }
+}
