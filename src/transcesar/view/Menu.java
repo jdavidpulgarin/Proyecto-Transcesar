@@ -551,4 +551,21 @@ public class Menu {
             }
         } while (opcion != 0);
     }
+
+    private void crearReserva() {
+        String cedula = JOptionPane.showInputDialog("Cedula del pasajero:");
+        if (cedula == null) {
+            return;
+        }
+        String placa = JOptionPane.showInputDialog("Placa del vehiculo:");
+        if (placa == null) {
+            return;
+        }
+        String fechaViaje = JOptionPane.showInputDialog("Fecha del viaje (YYYY-MM-DD):");
+        if (fechaViaje == null) {
+            return;
+        }
+        String resultado = reservaService.crearReserva(cedula, placa, fechaViaje);
+        JOptionPane.showMessageDialog(null, resultado);
+    }
 }
