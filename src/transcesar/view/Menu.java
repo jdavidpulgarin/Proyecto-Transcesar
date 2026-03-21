@@ -4,15 +4,17 @@ import java.util.ArrayList;
 import javax.swing.JOptionPane;
 import transcesar.model.Bus;
 import transcesar.model.Buseta;
+import transcesar.model.Conductor;
 import transcesar.model.MicroBus;
+import transcesar.model.Pasajero;
+import transcesar.model.Reserva;
 import transcesar.model.Ticket;
 import transcesar.service.PersonaService;
 import transcesar.service.ReglasNegocioService;
 import transcesar.service.ReporteService;
+import transcesar.service.ReservaService;
 import transcesar.service.TicketService;
 import transcesar.service.VehiculoService;
-import transcesar.model.Reserva;
-import transcesar.service.ReservaService;
 
 public class Menu {
 
@@ -43,17 +45,18 @@ public class Menu {
                     + "-- Personas --\n"
                     + "5. Registrar Conductor\n"
                     + "6. Registrar Pasajero\n"
+                    + "7. Listar Personas\n"
                     + "-- Tickets --\n"
-                    + "7. Vender Tickets\n"
-                    + "8. Listar Tickets Vendidos\n"
+                    + "8. Vender Tickets\n"
+                    + "9. Listar Tickets Vendidos\n"
                     + "-- Estadisticas --\n"
-                    + "9. Total Recaudado\n"
-                    + "10. Pasajero Por Tipo\n"
-                    + "11. Vehiculo Con Mas Tickets\n"
+                    + "10. Total Recaudado\n"
+                    + "11. Pasajero Por Tipo\n"
+                    + "12. Vehiculo Con Mas Tickets\n"
                     + "-- Reportes --\n"
-                    + "12. Reportes\n"
+                    + "13. Reportes\n"
                     + "-- Reservas --\n"
-                    + "13. Reservas\n"
+                    + "14. Reservas\n"
                     + "0. Salir";
 
             String input = JOptionPane.showInputDialog(menu);
@@ -88,24 +91,27 @@ public class Menu {
                     registrarPasajero();
                     break;
                 case 7:
-                    venderTickets();
+                    listarPersonas();
                     break;
                 case 8:
-                    listarTickets();
+                    venderTickets();
                     break;
                 case 9:
-                    totalRecaudado();
+                    listarTickets();
                     break;
                 case 10:
-                    pasajeroTipo();
+                    totalRecaudado();
                     break;
                 case 11:
-                    vehiculomTickets();
+                    pasajeroTipo();
                     break;
                 case 12:
-                    menuReportes();
+                    vehiculomTickets();
                     break;
                 case 13:
+                    menuReportes();
+                    break;
+                case 14:
                     menuReservas();
                     break;
                 case 0:
@@ -205,98 +211,179 @@ public class Menu {
     }
 
     private void registrarConductor() {
-        String cedula = JOptionPane.showInputDialog("Cedula:");
-        if (cedula == null) {
-            return;
+        String cedula = "";
+        while (true) {
+            cedula = JOptionPane.showInputDialog("Cedula (solo numeros):");
+            if (cedula == null) return;
+            if (cedula.trim().matches("[0-9]+")) break;
+            JOptionPane.showMessageDialog(null, "La cedula solo puede contener numeros. Intentelo de nuevo.");
         }
-        String nombre = JOptionPane.showInputDialog("Nombre:");
-        if (nombre == null) {
-            return;
+
+        String nombre = "";
+        while (true) {
+            nombre = JOptionPane.showInputDialog("Nombre:");
+            if (nombre == null) return;
+            if (nombre.trim().matches("[a-zA-ZáéíóúÁÉÍÓÚñÑ ]+")) break;
+            JOptionPane.showMessageDialog(null, "El nombre solo puede contener letras. Intentelo de nuevo.");
         }
-        String apellido = JOptionPane.showInputDialog("Apellido:");
-        if (apellido == null) {
-            return;
+
+        String apellido = "";
+        while (true) {
+            apellido = JOptionPane.showInputDialog("Apellido:");
+            if (apellido == null) return;
+            if (apellido.trim().matches("[a-zA-ZáéíóúÁÉÍÓÚñÑ ]+")) break;
+            JOptionPane.showMessageDialog(null, "El apellido solo puede contener letras. Intentelo de nuevo.");
         }
-        String sexo = JOptionPane.showInputDialog("Sexo (M/F):");
-        if (sexo == null) {
-            return;
+
+        String[] sexoOpciones = {"M", "F"};
+        String sexo = (String) JOptionPane.showInputDialog(null,
+                "Sexo:", "Sexo",
+                JOptionPane.QUESTION_MESSAGE, null, sexoOpciones, sexoOpciones[0]);
+        if (sexo == null) return;
+
+        int edad = 0;
+        while (true) {
+            String edadStr = JOptionPane.showInputDialog("Edad:");
+            if (edadStr == null) return;
+            try {
+                edad = Integer.parseInt(edadStr.trim());
+                if (edad >= 18 && edad <= 70) break;
+                JOptionPane.showMessageDialog(null, "La edad del conductor debe estar entre 18 y 70. Intentelo de nuevo.");
+            } catch (NumberFormatException e) {
+                JOptionPane.showMessageDialog(null, "La edad debe ser un numero. Intentelo de nuevo.");
+            }
         }
-        String edadStr = JOptionPane.showInputDialog("Edad:");
-        if (edadStr == null) {
-            return;
+
+        String telefono = "";
+        while (true) {
+            telefono = JOptionPane.showInputDialog("Telefono:");
+            if (telefono == null) return;
+            if (telefono.trim().matches("[0-9]+")) break;
+            JOptionPane.showMessageDialog(null, "El telefono solo puede contener numeros. Intentelo de nuevo.");
         }
-        String telefono = JOptionPane.showInputDialog("Telefono:");
-        if (telefono == null) {
-            return;
+
+        String licencia = "";
+        while (true) {
+            licencia = JOptionPane.showInputDialog("Numero de licencia:");
+            if (licencia == null) return;
+            if (!licencia.trim().isEmpty()) break;
+            JOptionPane.showMessageDialog(null, "El numero de licencia no puede estar vacio. Intentelo de nuevo.");
         }
-        String licencia = JOptionPane.showInputDialog("Numero de licencia:");
-        if (licencia == null) {
-            return;
-        }
+
         String[] cats = {"B1", "B2", "C1", "C2"};
         String categoria = (String) JOptionPane.showInputDialog(null,
                 "Categoria:", "Licencia",
                 JOptionPane.QUESTION_MESSAGE, null, cats, cats[0]);
-        if (categoria == null) {
-            return;
-        }
-        try {
-            int edad = Integer.parseInt(edadStr);
-            String resultado = personaService.registrarConductor(cedula, nombre,
-                    apellido, sexo, edad, telefono, licencia, categoria);
-            JOptionPane.showMessageDialog(null, resultado);
-        } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(null, "La edad debe ser un numero");
-        }
+        if (categoria == null) return;
+
+        String resultado = personaService.registrarConductor(cedula.trim(), nombre.trim(),
+                apellido.trim(), sexo, edad, telefono.trim(), licencia.trim(), categoria);
+        JOptionPane.showMessageDialog(null, resultado);
     }
 
     private void registrarPasajero() {
-        String cedula = JOptionPane.showInputDialog("Cedula:");
-        if (cedula == null) {
-            return;
+        String cedula = "";
+        while (true) {
+            cedula = JOptionPane.showInputDialog("Cedula (solo numeros):");
+            if (cedula == null) return;
+            if (cedula.trim().matches("[0-9]+")) break;
+            JOptionPane.showMessageDialog(null, "La cedula solo puede contener numeros. Intentelo de nuevo.");
         }
-        String nombre = JOptionPane.showInputDialog("Nombre:");
-        if (nombre == null) {
-            return;
+
+        String nombre = "";
+        while (true) {
+            nombre = JOptionPane.showInputDialog("Nombre:");
+            if (nombre == null) return;
+            if (nombre.trim().matches("[a-zA-ZáéíóúÁÉÍÓÚñÑ ]+")) break;
+            JOptionPane.showMessageDialog(null, "El nombre solo puede contener letras. Intentelo de nuevo.");
         }
-        String apellido = JOptionPane.showInputDialog("Apellido:");
-        if (apellido == null) {
-            return;
+
+        String apellido = "";
+        while (true) {
+            apellido = JOptionPane.showInputDialog("Apellido:");
+            if (apellido == null) return;
+            if (apellido.trim().matches("[a-zA-ZáéíóúÁÉÍÓÚñÑ ]+")) break;
+            JOptionPane.showMessageDialog(null, "El apellido solo puede contener letras. Intentelo de nuevo.");
         }
-        String sexo = JOptionPane.showInputDialog("Sexo (M/F):");
-        if (sexo == null) {
-            return;
+
+        String[] sexoOpciones = {"M", "F"};
+        String sexo = (String) JOptionPane.showInputDialog(null,
+                "Sexo:", "Sexo",
+                JOptionPane.QUESTION_MESSAGE, null, sexoOpciones, sexoOpciones[0]);
+        if (sexo == null) return;
+
+        int edad = 0;
+        while (true) {
+            String edadStr = JOptionPane.showInputDialog("Edad:");
+            if (edadStr == null) return;
+            try {
+                edad = Integer.parseInt(edadStr.trim());
+                if (edad >= 1 && edad <= 120) break;
+                JOptionPane.showMessageDialog(null, "La edad debe estar entre 1 y 120. Intentelo de nuevo.");
+            } catch (NumberFormatException e) {
+                JOptionPane.showMessageDialog(null, "La edad debe ser un numero. Intentelo de nuevo.");
+            }
         }
-        String edadStr = JOptionPane.showInputDialog("Edad:");
-        if (edadStr == null) {
-            return;
+
+        String telefono = "";
+        while (true) {
+            telefono = JOptionPane.showInputDialog("Telefono:");
+            if (telefono == null) return;
+            if (telefono.trim().matches("[0-9]+")) break;
+            JOptionPane.showMessageDialog(null, "El telefono solo puede contener numeros. Intentelo de nuevo.");
         }
-        String telefono = JOptionPane.showInputDialog("Telefono:");
-        if (telefono == null) {
-            return;
-        }
-        String[] tiposDisplay = {"Regular (0%)", "Estudiante (15%)", "Adulto Mayor (30%)"};
-        String[] tiposValor = {"REGULAR", "ESTUDIANTE", "ADULTO_MAYOR"};
-        String tipoElegido = (String) JOptionPane.showInputDialog(null,
-                "Tipo de pasajero:", "Tipo",
-                JOptionPane.QUESTION_MESSAGE, null, tiposDisplay, tiposDisplay[0]);
-        if (tipoElegido == null) {
-            return;
-        }
-        String tipoFinal = "REGULAR";
-        if (tipoElegido.equals("Estudiante (15%)")) {
-            tipoFinal = "ESTUDIANTE";
-        } else if (tipoElegido.equals("Adulto Mayor (30%)")) {
+
+        String tipoFinal;
+        if (edad >= 60) {
             tipoFinal = "ADULTO_MAYOR";
+            JOptionPane.showMessageDialog(null, "Pasajero mayor de 60 anos.\nSe asigna automaticamente como Adulto Mayor con 30% de descuento.");
+        } else {
+            String[] tiposDisplay = {"Regular (0%)", "Estudiante (15%)"};
+            String tipoElegido = (String) JOptionPane.showInputDialog(null,
+                    "Tipo de pasajero:", "Tipo",
+                    JOptionPane.QUESTION_MESSAGE, null, tiposDisplay, tiposDisplay[0]);
+            if (tipoElegido == null) return;
+            if (tipoElegido.equals("Estudiante (15%)")) {
+                tipoFinal = "ESTUDIANTE";
+            } else {
+                tipoFinal = "REGULAR";
+            }
         }
-        try {
-            int edad = Integer.parseInt(edadStr);
-            String resultado = personaService.registrarPasajero(cedula, nombre,
-                    apellido, sexo, edad, telefono, tipoFinal);
-            JOptionPane.showMessageDialog(null, resultado);
-        } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(null, "La edad debe ser un numero");
+
+        String resultado = personaService.registrarPasajero(cedula.trim(), nombre.trim(),
+                apellido.trim(), sexo, edad, telefono.trim(), tipoFinal);
+        JOptionPane.showMessageDialog(null, resultado);
+    }
+
+    private void listarPersonas() {
+        String texto = "=== CONDUCTORES REGISTRADOS ===\n\n";
+        ArrayList<Conductor> conductores = (ArrayList<Conductor>) personaService.getConductores();
+        if (conductores.isEmpty()) {
+            texto = texto + "(Sin conductores registrados)\n";
+        } else {
+            for (int i = 0; i < conductores.size(); i++) {
+                Conductor c = conductores.get(i);
+                texto = texto + "Cedula: " + c.getCedula()
+                        + " | " + c.getNombreCompleto()
+                        + " | Licencia: " + c.getNumeroLicencia()
+                        + " | Categoria: " + c.getCategoriaLicencia() + "\n";
+            }
         }
+        texto = texto + "\n=== PASAJEROS REGISTRADOS ===\n\n";
+        ArrayList<Pasajero> pasajeros = (ArrayList<Pasajero>) personaService.getPasajeros();
+        if (pasajeros.isEmpty()) {
+            texto = texto + "(Sin pasajeros registrados)";
+        } else {
+            for (int i = 0; i < pasajeros.size(); i++) {
+                Pasajero p = pasajeros.get(i);
+                texto = texto + "Cedula: " + p.getCedula()
+                        + " | " + p.getNombreCompleto()
+                        + " | Tipo: " + p.getTipo() + "\n";
+            }
+        }
+        javax.swing.JTextArea area = new javax.swing.JTextArea(20, 45);
+        area.setText(texto);
+        JOptionPane.showMessageDialog(null, area, "Personas registradas", JOptionPane.INFORMATION_MESSAGE);
     }
 
     private void venderTickets() {
@@ -316,8 +403,6 @@ public class Menu {
         if (destino == null) {
             return;
         }
-
-        // Validar limite de 3 tickets por dia
         String fecha = java.time.LocalDate.now().toString();
         String errorLimite = reglasNegocioService.validarLimiteTickets(
                 (ArrayList<Ticket>) ticketService.getTickets(), cedula, fecha);
@@ -325,7 +410,6 @@ public class Menu {
             JOptionPane.showMessageDialog(null, errorLimite);
             return;
         }
-
         String resultado = ticketService.venderTicket(cedula, placa, origen, destino);
         JOptionPane.showMessageDialog(null, resultado);
     }
@@ -414,19 +498,14 @@ public class Menu {
                     + "3. Tickets por tipo de pasajero\n"
                     + "4. Resumen del dia de hoy\n"
                     + "0. Volver";
-
             String input = JOptionPane.showInputDialog(menu);
-            if (input == null) {
-                break;
-            }
-
+            if (input == null) break;
             try {
                 opcion = Integer.parseInt(input);
             } catch (NumberFormatException e) {
                 JOptionPane.showMessageDialog(null, "Ingrese un numero valido");
                 continue;
             }
-
             switch (opcion) {
                 case 1:
                     reportePorFecha();
@@ -451,9 +530,7 @@ public class Menu {
 
     private void reportePorFecha() {
         String fecha = JOptionPane.showInputDialog("Ingrese la fecha (YYYY-MM-DD):");
-        if (fecha == null) {
-            return;
-        }
+        if (fecha == null) return;
         String texto = reporteService.reportePorFecha(fecha);
         javax.swing.JTextArea area = new javax.swing.JTextArea(15, 40);
         area.setText(texto);
@@ -465,9 +542,7 @@ public class Menu {
         String tipoElegido = (String) JOptionPane.showInputDialog(null,
                 "Tipo de vehiculo:", "Filtro",
                 JOptionPane.QUESTION_MESSAGE, null, tipos, tipos[0]);
-        if (tipoElegido == null) {
-            return;
-        }
+        if (tipoElegido == null) return;
         String texto = reporteService.reportePorTipoVehiculo(tipoElegido);
         javax.swing.JTextArea area = new javax.swing.JTextArea(15, 40);
         area.setText(texto);
@@ -476,13 +551,10 @@ public class Menu {
 
     private void reportePorTipoPasajero() {
         String[] tiposDisplay = {"Regular", "Estudiante", "Adulto Mayor"};
-        String[] tiposValor = {"REGULAR", "ESTUDIANTE", "ADULTO_MAYOR"};
         String tipoElegido = (String) JOptionPane.showInputDialog(null,
                 "Tipo de pasajero:", "Filtro",
                 JOptionPane.QUESTION_MESSAGE, null, tiposDisplay, tiposDisplay[0]);
-        if (tipoElegido == null) {
-            return;
-        }
+        if (tipoElegido == null) return;
         String tipoValor = "REGULAR";
         if (tipoElegido.equals("Estudiante")) {
             tipoValor = "ESTUDIANTE";
@@ -511,19 +583,14 @@ public class Menu {
                     + "5. Convertir reserva en ticket\n"
                     + "6. Verificar reservas vencidas\n"
                     + "0. Volver";
-
             String input = JOptionPane.showInputDialog(menu);
-            if (input == null) {
-                break;
-            }
-
+            if (input == null) break;
             try {
                 opcion = Integer.parseInt(input);
             } catch (NumberFormatException e) {
                 JOptionPane.showMessageDialog(null, "Ingrese un numero valido");
                 continue;
             }
-
             switch (opcion) {
                 case 1:
                     crearReserva();
@@ -554,26 +621,18 @@ public class Menu {
 
     private void crearReserva() {
         String cedula = JOptionPane.showInputDialog("Cedula del pasajero:");
-        if (cedula == null) {
-            return;
-        }
+        if (cedula == null) return;
         String placa = JOptionPane.showInputDialog("Placa del vehiculo:");
-        if (placa == null) {
-            return;
-        }
+        if (placa == null) return;
         String fechaViaje = JOptionPane.showInputDialog("Fecha del viaje (YYYY-MM-DD):");
-        if (fechaViaje == null) {
-            return;
-        }
+        if (fechaViaje == null) return;
         String resultado = reservaService.crearReserva(cedula, placa, fechaViaje);
         JOptionPane.showMessageDialog(null, resultado);
     }
 
     private void cancelarReserva() {
         String codigo = JOptionPane.showInputDialog("Codigo de la reserva:");
-        if (codigo == null) {
-            return;
-        }
+        if (codigo == null) return;
         String resultado = reservaService.cancelarReserva(codigo);
         JOptionPane.showMessageDialog(null, resultado);
     }
@@ -581,7 +640,6 @@ public class Menu {
     private void listarReservasActivas() {
         ArrayList<Reserva> lista = reservaService.listarReservasActivas();
         String texto = "=== RESERVAS ACTIVAS ===\n\n";
-
         if (lista.isEmpty()) {
             texto = texto + "(Sin reservas activas)";
         } else {
@@ -593,7 +651,6 @@ public class Menu {
                         + " | Viaje: " + r.getFechaViaje() + "\n";
             }
         }
-
         javax.swing.JTextArea area = new javax.swing.JTextArea(15, 40);
         area.setText(texto);
         JOptionPane.showMessageDialog(null, area, "Reservas activas", JOptionPane.INFORMATION_MESSAGE);
@@ -601,12 +658,9 @@ public class Menu {
 
     private void historialReservasPasajero() {
         String cedula = JOptionPane.showInputDialog("Cedula del pasajero:");
-        if (cedula == null) {
-            return;
-        }
+        if (cedula == null) return;
         ArrayList<Reserva> lista = reservaService.historialPasajero(cedula);
         String texto = "=== HISTORIAL DE RESERVAS ===\n\n";
-
         if (lista.isEmpty()) {
             texto = texto + "(Sin reservas para ese pasajero)";
         } else {
@@ -618,7 +672,6 @@ public class Menu {
                         + " | Estado: " + r.getEstado() + "\n";
             }
         }
-
         javax.swing.JTextArea area = new javax.swing.JTextArea(15, 40);
         area.setText(texto);
         JOptionPane.showMessageDialog(null, area, "Historial reservas", JOptionPane.INFORMATION_MESSAGE);
@@ -626,17 +679,11 @@ public class Menu {
 
     private void convertirReservaEnTicket() {
         String codigo = JOptionPane.showInputDialog("Codigo de la reserva:");
-        if (codigo == null) {
-            return;
-        }
+        if (codigo == null) return;
         String origen = JOptionPane.showInputDialog("Origen:");
-        if (origen == null) {
-            return;
-        }
+        if (origen == null) return;
         String destino = JOptionPane.showInputDialog("Destino:");
-        if (destino == null) {
-            return;
-        }
+        if (destino == null) return;
         String resultado = reservaService.convertirEnTicket(codigo, origen, destino);
         JOptionPane.showMessageDialog(null, resultado);
     }
