@@ -22,9 +22,10 @@ public class VehiculoDAO {
         try (BufferedWriter bw = new BufferedWriter(
                 new FileWriter(archivo, true))) {
             bw.write(v.getPlaca() + ";" +
-                     v.getRuta() + ";" +
-                     v.getCapacidadMaxima() + ";" +
-                     v.getTarifaBase());
+         v.getRuta() + ";" +
+         v.getCapacidadMaxima() + ";" +
+         v.getTarifaBase() + ";" +
+         v.getPasajerosActuales());
             bw.newLine();
         } catch (IOException e) {
             System.out.println("Error al guardar vehículo: " + e.getMessage());
