@@ -48,5 +48,28 @@ public class ReservaDAO {
             System.out.println("ERROR al actualizar reserva: " + e.getMessage());
         }
     }
+     public List<String[]> cargarDatosReservas() {
+        List<String[]> lista = new ArrayList<>();
+        File archivo = new File(ARCHIVO_RESERVAS);
+        if (!archivo.exists()) {
+            return lista;
+        }
+        try (BufferedReader br = new BufferedReader(new FileReader(archivo))) {
+            String linea;
+            while ((linea = br.readLine()) != null) {
+                linea = linea.trim();
+                if (linea.isEmpty()) {
+                    continue;
+                }
+                String[] partes = linea.split(";");
+                if (partes.length == 6) {
+                    lista.add(partes);
+                }
+            }
+        } catch (IOException e) {
+            System.out.println("ERROR al cargar reservas: " + e.getMessage());
+        }
+        return lista;
+    }
 }
      
