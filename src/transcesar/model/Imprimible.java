@@ -8,6 +8,6 @@ package transcesar.model;
  *
  * @author Pulgarin
  */
-public class Imprimible {
-    
+public interface Imprimible {
+    void imprimirDetalle();
 }
