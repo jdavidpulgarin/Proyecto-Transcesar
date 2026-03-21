@@ -71,5 +71,27 @@ public class ReservaDAO {
         }
         return lista;
     }
+       private List<String> cargarLineas() {
+        List<String> lista = new ArrayList<>();
+        File archivo = new File(ARCHIVO_RESERVAS);
+        if (!archivo.exists()) {
+            return lista;
+        }
+        try (BufferedReader br = new BufferedReader(new FileReader(archivo))) {
+            String linea;
+            while ((linea = br.readLine()) != null) {
+                if (!linea.trim().isEmpty()) {
+                    lista.add(linea.trim());
+                }
+            }
+        } catch (IOException e) {
+            System.out.println("ERROR al leer reservas: " + e.getMessage());
+        }
+        return lista;
+    }
+
+    public int contarReservas() {
+        return cargarDatosReservas().size();
+    }
 }
      
