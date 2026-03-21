@@ -499,4 +499,56 @@ public class Menu {
         String texto = reporteService.resumenHoy();
         JOptionPane.showMessageDialog(null, texto, "Resumen del dia", JOptionPane.INFORMATION_MESSAGE);
     }
+
+    private void menuReservas() {
+        int opcion = -1;
+        do {
+            String menu = "RESERVAS\n"
+                    + "1. Crear reserva\n"
+                    + "2. Cancelar reserva\n"
+                    + "3. Listar reservas activas\n"
+                    + "4. Historial de reservas de un pasajero\n"
+                    + "5. Convertir reserva en ticket\n"
+                    + "6. Verificar reservas vencidas\n"
+                    + "0. Volver";
+
+            String input = JOptionPane.showInputDialog(menu);
+            if (input == null) {
+                break;
+            }
+
+            try {
+                opcion = Integer.parseInt(input);
+            } catch (NumberFormatException e) {
+                JOptionPane.showMessageDialog(null, "Ingrese un numero valido");
+                continue;
+            }
+
+            switch (opcion) {
+                case 1:
+                    crearReserva();
+                    break;
+                case 2:
+                    cancelarReserva();
+                    break;
+                case 3:
+                    listarReservasActivas();
+                    break;
+                case 4:
+                    historialReservasPasajero();
+                    break;
+                case 5:
+                    convertirReservaEnTicket();
+                    break;
+                case 6:
+                    verificarReservasVencidas();
+                    break;
+                case 0:
+                    break;
+                default:
+                    JOptionPane.showMessageDialog(null, "Opcion invalida");
+                    break;
+            }
+        } while (opcion != 0);
+    }
 }
