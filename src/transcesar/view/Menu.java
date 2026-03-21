@@ -568,4 +568,13 @@ public class Menu {
         String resultado = reservaService.crearReserva(cedula, placa, fechaViaje);
         JOptionPane.showMessageDialog(null, resultado);
     }
+
+    private void cancelarReserva() {
+        String codigo = JOptionPane.showInputDialog("Codigo de la reserva:");
+        if (codigo == null) {
+            return;
+        }
+        String resultado = reservaService.cancelarReserva(codigo);
+        JOptionPane.showMessageDialog(null, resultado);
+    }
 }
