@@ -8,7 +8,8 @@ package transcesar.model;
  *
  * @author Katherin
  */
-public class Reserva {
+public class Reserva implements Imprimible {
+
 
     private String codigo;
     private Pasajero pasajero;

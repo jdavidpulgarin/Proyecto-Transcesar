@@ -8,7 +8,7 @@ package transcesar.model;
  *
  * @author Pulgarin
  */
-public class Ticket {
+public class Ticket implements Calculable, Imprimible {
 
     private int      id;
     private Pasajero pasajero;

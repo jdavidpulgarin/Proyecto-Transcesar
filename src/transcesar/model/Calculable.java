@@ -8,6 +8,6 @@ package transcesar.model;
  *
  * @author Pulgarin
  */
-public class Calculable {
-    
+public interface Calculable {
+    double calcularTotal();
 }

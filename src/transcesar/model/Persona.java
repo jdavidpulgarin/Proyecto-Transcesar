@@ -6,7 +6,7 @@ package transcesar.model;
  * @author Pulgarin
  */
 
-    public abstract class Persona {
+    public abstract class Persona implements Imprimible {
 
     protected String cedula;
     protected String nombre;

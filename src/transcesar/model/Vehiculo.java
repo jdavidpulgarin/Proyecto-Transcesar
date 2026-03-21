@@ -8,7 +8,7 @@ package transcesar.model;
  *
  * @author Pulgarin
  */
-public abstract class Vehiculo {
+public abstract class Vehiculo implements Imprimible {
     protected String placa;
     protected String ruta;
     protected int capacidadMaxima;
