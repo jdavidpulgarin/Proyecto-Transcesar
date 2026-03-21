@@ -623,4 +623,21 @@ public class Menu {
         area.setText(texto);
         JOptionPane.showMessageDialog(null, area, "Historial reservas", JOptionPane.INFORMATION_MESSAGE);
     }
+
+    private void convertirReservaEnTicket() {
+        String codigo = JOptionPane.showInputDialog("Codigo de la reserva:");
+        if (codigo == null) {
+            return;
+        }
+        String origen = JOptionPane.showInputDialog("Origen:");
+        if (origen == null) {
+            return;
+        }
+        String destino = JOptionPane.showInputDialog("Destino:");
+        if (destino == null) {
+            return;
+        }
+        String resultado = reservaService.convertirEnTicket(codigo, origen, destino);
+        JOptionPane.showMessageDialog(null, resultado);
+    }
 }
