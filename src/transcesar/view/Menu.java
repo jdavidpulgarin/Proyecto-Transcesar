@@ -10,6 +10,7 @@ import transcesar.model.Pasajero;
 import transcesar.model.Reserva;
 import transcesar.model.Ruta;
 import transcesar.model.Ticket;
+import transcesar.model.Vehiculo;
 import transcesar.service.PersonaService;
 import transcesar.service.ReglasNegocioService;
 import transcesar.service.ReporteService;
@@ -233,8 +234,8 @@ public class Menu {
                 "Seleccione la ruta:", "Rutas disponibles",
                 JOptionPane.QUESTION_MESSAGE, null, opciones, opciones[0]);
         if (elegida == null) return null;
-        String codigo = elegida.split("\\|")[0].trim();
-        return rutaService.buscarPorCodigo(codigo);
+        String codigoRuta = elegida.split("\\|")[0].trim();
+        return rutaService.buscarPorCodigo(codigoRuta);
     }
 
     // ─── VEHICULOS ────────────────────────────────────────────────────────────
@@ -252,11 +253,15 @@ public class Menu {
         if (ruta == null) return;
 
         try {
-            vehiculoService.registrarVehiculo(new Buseta(placa.trim(),
-                    ruta.getCiudadOrigen() + " - " + ruta.getCiudadDestino()));
-            JOptionPane.showMessageDialog(null, "Buseta registrada: " + placa
-                    + "\nRuta: " + ruta.getCiudadOrigen() + " -> " + ruta.getCiudadDestino()
-                    + " | " + ruta.getDistanciaKm() + " km | " + ruta.getTiempoMinutos() + " min");
+            Buseta buseta = new Buseta(placa.trim(),
+                    ruta.getCiudadOrigen() + " - " + ruta.getCiudadDestino());
+            vehiculoService.registrarVehiculo(buseta);
+            JOptionPane.showMessageDialog(null,
+                    "Buseta registrada: " + placa + "\n"
+                    + "Ruta: " + ruta.getCiudadOrigen() + " -> " + ruta.getCiudadDestino() + "\n"
+                    + "Distancia: " + ruta.getDistanciaKm() + " km | Tiempo: " + ruta.getTiempoMinutos() + " min\n"
+                    + "Capacidad maxima: " + buseta.getCapacidadMaxima() + " pasajeros\n"
+                    + "Cupos disponibles: " + (buseta.getCapacidadMaxima() - buseta.getPasajerosActuales()));
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, "Error: " + e.getMessage());
         }
@@ -275,11 +280,15 @@ public class Menu {
         if (ruta == null) return;
 
         try {
-            vehiculoService.registrarVehiculo(new Bus(placa.trim(),
-                    ruta.getCiudadOrigen() + " - " + ruta.getCiudadDestino()));
-            JOptionPane.showMessageDialog(null, "Bus registrado: " + placa
-                    + "\nRuta: " + ruta.getCiudadOrigen() + " -> " + ruta.getCiudadDestino()
-                    + " | " + ruta.getDistanciaKm() + " km | " + ruta.getTiempoMinutos() + " min");
+            Bus bus = new Bus(placa.trim(),
+                    ruta.getCiudadOrigen() + " - " + ruta.getCiudadDestino());
+            vehiculoService.registrarVehiculo(bus);
+            JOptionPane.showMessageDialog(null,
+                    "Bus registrado: " + placa + "\n"
+                    + "Ruta: " + ruta.getCiudadOrigen() + " -> " + ruta.getCiudadDestino() + "\n"
+                    + "Distancia: " + ruta.getDistanciaKm() + " km | Tiempo: " + ruta.getTiempoMinutos() + " min\n"
+                    + "Capacidad maxima: " + bus.getCapacidadMaxima() + " pasajeros\n"
+                    + "Cupos disponibles: " + (bus.getCapacidadMaxima() - bus.getPasajerosActuales()));
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, "Error: " + e.getMessage());
         }
@@ -298,11 +307,15 @@ public class Menu {
         if (ruta == null) return;
 
         try {
-            vehiculoService.registrarVehiculo(new MicroBus(placa.trim(),
-                    ruta.getCiudadOrigen() + " - " + ruta.getCiudadDestino()));
-            JOptionPane.showMessageDialog(null, "MicroBus registrado: " + placa
-                    + "\nRuta: " + ruta.getCiudadOrigen() + " -> " + ruta.getCiudadDestino()
-                    + " | " + ruta.getDistanciaKm() + " km | " + ruta.getTiempoMinutos() + " min");
+            MicroBus micro = new MicroBus(placa.trim(),
+                    ruta.getCiudadOrigen() + " - " + ruta.getCiudadDestino());
+            vehiculoService.registrarVehiculo(micro);
+            JOptionPane.showMessageDialog(null,
+                    "MicroBus registrado: " + placa + "\n"
+                    + "Ruta: " + ruta.getCiudadOrigen() + " -> " + ruta.getCiudadDestino() + "\n"
+                    + "Distancia: " + ruta.getDistanciaKm() + " km | Tiempo: " + ruta.getTiempoMinutos() + " min\n"
+                    + "Capacidad maxima: " + micro.getCapacidadMaxima() + " pasajeros\n"
+                    + "Cupos disponibles: " + (micro.getCapacidadMaxima() - micro.getPasajerosActuales()));
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, "Error: " + e.getMessage());
         }
@@ -389,12 +402,13 @@ public class Menu {
             JOptionPane.showMessageDialog(null, "El telefono solo puede contener numeros. Intentelo de nuevo.");
         }
 
+        // Validacion: el conductor debe tener licencia
         String licencia = "";
         while (true) {
             licencia = JOptionPane.showInputDialog("Numero de licencia:");
             if (licencia == null) return;
             if (!licencia.trim().isEmpty()) break;
-            JOptionPane.showMessageDialog(null, "El numero de licencia no puede estar vacio. Intentelo de nuevo.");
+            JOptionPane.showMessageDialog(null, "El conductor debe tener licencia registrada. Intentelo de nuevo.");
         }
 
         String[] cats = {"B1", "B2", "C1", "C2"};
@@ -463,7 +477,8 @@ public class Menu {
         String tipoFinal;
         if (edad >= 60) {
             tipoFinal = "ADULTO_MAYOR";
-            JOptionPane.showMessageDialog(null, "Pasajero mayor de 60 anos.\nSe asigna automaticamente como Adulto Mayor con 30% de descuento.");
+            JOptionPane.showMessageDialog(null,
+                    "Pasajero mayor de 60 anos.\nSe asigna automaticamente como Adulto Mayor con 30% de descuento.");
         } else {
             String[] tiposDisplay = {"Regular (0%)", "Estudiante (15%)"};
             String tipoElegido = (String) JOptionPane.showInputDialog(null,
@@ -522,7 +537,21 @@ public class Menu {
         String placa = JOptionPane.showInputDialog("Placa del vehiculo:");
         if (placa == null) return;
 
-        // Seleccionar ruta para origen y destino
+        // Verificar cupos disponibles antes de continuar
+        Vehiculo vehiculo = vehiculoService.buscarVehiculoPorPlaca(placa);
+        if (vehiculo == null) {
+            JOptionPane.showMessageDialog(null, "ERROR: No se encontro un vehiculo con la placa " + placa);
+            return;
+        }
+        int cuposDisponibles = vehiculo.getCapacidadMaxima() - vehiculo.getPasajerosActuales();
+        if (cuposDisponibles <= 0) {
+            JOptionPane.showMessageDialog(null,
+                    "ERROR: El vehiculo " + placa + " no tiene cupos disponibles.\n"
+                    + "Capacidad maxima: " + vehiculo.getCapacidadMaxima() + "\n"
+                    + "Pasajeros actuales: " + vehiculo.getPasajerosActuales());
+            return;
+        }
+
         Ruta ruta = seleccionarRuta();
         if (ruta == null) return;
 
@@ -530,6 +559,8 @@ public class Menu {
         String destino = ruta.getCiudadDestino();
 
         String fecha = java.time.LocalDate.now().toString();
+
+        // Validar limite de 3 tickets por dia
         String errorLimite = reglasNegocioService.validarLimiteTickets(
                 (ArrayList<Ticket>) ticketService.getTickets(), cedula, fecha);
         if (errorLimite != null) {
@@ -537,8 +568,25 @@ public class Menu {
             return;
         }
 
+        // Informar si es dia festivo
+        if (reglasNegocioService.esFestivo(fecha)) {
+            JOptionPane.showMessageDialog(null,
+                    "ATENCION: Hoy " + fecha + " es dia festivo.\n"
+                    + "Se aplicara un recargo del 20% sobre la tarifa base.");
+        }
+
         String resultado = ticketService.venderTicket(cedula, placa, origen, destino);
-        JOptionPane.showMessageDialog(null, resultado);
+
+        // Mostrar cupos restantes despues de vender
+        if (!resultado.startsWith("ERROR")) {
+            int cuposRestantes = vehiculo.getCapacidadMaxima() - vehiculo.getPasajerosActuales();
+            JOptionPane.showMessageDialog(null,
+                    resultado + "\n\n"
+                    + "Cupos restantes en el vehiculo: " + cuposRestantes
+                    + " de " + vehiculo.getCapacidadMaxima());
+        } else {
+            JOptionPane.showMessageDialog(null, resultado);
+        }
     }
 
     private void listarTickets() {
