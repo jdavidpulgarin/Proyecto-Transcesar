@@ -1,13 +1,5 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package transcesar.service;
 
-/**
- *
- * @author Pulgarin
- */
 import transcesar.dao.VehiculoDAO;
 import transcesar.model.Vehiculo;
 import transcesar.model.Buseta;
@@ -35,76 +27,91 @@ public class VehiculoService {
 
     public void registrarVehiculo(Vehiculo v) {
         if (v.getPlaca() == null || v.getPlaca().trim().isEmpty()) {
-            throw new IllegalArgumentException("La placa no puede estar vacía");
+            throw new IllegalArgumentException("La placa no puede estar vacia");
         }
         if (v.getRuta() == null || v.getRuta().trim().isEmpty()) {
-            throw new IllegalArgumentException("La ruta no puede estar vacía");
+            throw new IllegalArgumentException("La ruta no puede estar vacia");
         }
-        if (vehiculoDAO.existePlaca(v.getPlaca(), obtenerArchivo(v))) {
-            throw new IllegalArgumentException("Ya existe un vehículo con la placa: "
-                    + v.getPlaca());
+        
+        if (vehiculoDAO.existePlaca(v.getPlaca(), "buseta.txt")
+                || vehiculoDAO.existePlaca(v.getPlaca(), "microbus.txt")
+                || vehiculoDAO.existePlaca(v.getPlaca(), "bus.txt")) {
+            throw new IllegalArgumentException("Ya existe un vehiculo con la placa: " + v.getPlaca());
         }
         vehiculoDAO.guardar(v, obtenerArchivo(v));
-        System.out.println(" Vehículo registrado exitosamente.");
     }
-
-   public Vehiculo buscarVehiculoPorPlaca(String placa) {
-    String linea = vehiculoDAO.buscarPorPlaca(placa, "buseta.txt");
-    if (linea != null) {
-        return parsearVehiculo(linea, "buseta.txt");
-    }
-    linea = vehiculoDAO.buscarPorPlaca(placa, "microbus.txt");
-    if (linea != null) {
-        return parsearVehiculo(linea, "microbus.txt");
-    }
-    linea = vehiculoDAO.buscarPorPlaca(placa, "bus.txt");
-    if (linea != null) {
-        return parsearVehiculo(linea, "bus.txt");
-    }
-    return null;
-}
 
     private Vehiculo parsearVehiculo(String linea, String archivo) {
-    String[] d = linea.split(";");
-    String placa = d[0];
-    String ruta = d[1];
-    int ocupados = 0;
-    if (d.length >= 5) {
-        ocupados = (int) Double.parseDouble(d[4]);
+        String[] d = linea.split(";");
+        String placa = d[0];
+        String ruta = d[1];
+        int ocupados = 0;
+        if (d.length >= 5) {
+            try {
+                ocupados = Integer.parseInt(d[4]);
+            } catch (NumberFormatException e) {
+                ocupados = 0;
+            }
+        }
+        Vehiculo v;
+        switch (archivo) {
+            case "buseta.txt":
+                v = new Buseta(placa, ruta);
+                break;
+            case "microbus.txt":
+                v = new MicroBus(placa, ruta);
+                break;
+            default:
+                v = new Bus(placa, ruta);
+                break;
+        }
+        for (int i = 0; i < ocupados; i++) {
+            v.agregarPasajero();
+        }
+        return v;
     }
-    Vehiculo v;
-    switch (archivo) {
-        case "buseta.txt":
-            v = new Buseta(placa, ruta);
-            break;
-        case "microbus.txt":
-            v = new MicroBus(placa, ruta);
-            break;
-        default:
-            v = new Bus(placa, ruta);
-            break;
+
+    public Vehiculo buscarVehiculoPorPlaca(String placa) {
+        String linea = vehiculoDAO.buscarPorPlaca(placa, "buseta.txt");
+        if (linea != null) {
+            return parsearVehiculo(linea, "buseta.txt");
+        }
+
+        linea = vehiculoDAO.buscarPorPlaca(placa, "microbus.txt");
+        if (linea != null) {
+            return parsearVehiculo(linea, "microbus.txt");
+        }
+
+        linea = vehiculoDAO.buscarPorPlaca(placa, "bus.txt");
+        if (linea != null) {
+            return parsearVehiculo(linea, "bus.txt");
+        }
+
+        return null;
     }
-    for (int i = 0; i < ocupados; i++) {
-        v.agregarPasajero();
+
+    public String getTipoVehiculo(String placa) {
+        if (vehiculoDAO.buscarPorPlaca(placa, "buseta.txt") != null) {
+            return "Buseta";
+        }
+        if (vehiculoDAO.buscarPorPlaca(placa, "microbus.txt") != null) {
+            return "MicroBus";
+        }
+        if (vehiculoDAO.buscarPorPlaca(placa, "bus.txt") != null) {
+            return "Bus";
+        }
+        return null;
     }
-    return v;
-}
 
     public List<String> listarVehiculos(String archivo) {
-        List<String> lista = vehiculoDAO.listarTodos(archivo);
-        if (lista.isEmpty()) {
-            System.out.println("️ No hay vehículos registrados en " + archivo);
-        }
-        return lista;
+        return vehiculoDAO.listarTodos(archivo);
     }
 
     public void eliminarVehiculo(String placa, String archivo) {
         if (!vehiculoDAO.existePlaca(placa, archivo)) {
-            throw new IllegalArgumentException("No existe vehículo con placa: "
-                    + placa);
+            throw new IllegalArgumentException("No existe vehiculo con placa: " + placa);
         }
         vehiculoDAO.eliminar(placa, archivo);
-        System.out.println(" Vehículo eliminado exitosamente.");
     }
 
     public void actualizarVehiculos() {
@@ -120,12 +127,15 @@ public class VehiculoService {
     public boolean verificarCupos(String placa, String archivo) {
         String linea = vehiculoDAO.buscarPorPlaca(placa, archivo);
         if (linea == null) {
-            throw new IllegalArgumentException("No existe vehículo con placa: "
-                    + placa);
+            throw new IllegalArgumentException("No existe vehiculo con placa: " + placa);
         }
         String[] datos = linea.split(";");
         int capacidad = Integer.parseInt(datos[2]);
         int actuales = Integer.parseInt(datos[3]);
         return actuales < capacidad;
     }
+    public void actualizarVehiculo(Vehiculo v) {
+    vehiculoDAO.actualizar(v, obtenerArchivo(v));
 }
+}
+

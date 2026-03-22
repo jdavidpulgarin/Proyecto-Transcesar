@@ -55,7 +55,7 @@ public class TicketService {
         ticket.setValorFinal(valorFinal);
 
         vehiculo.agregarPasajero();
-        vehiculoService.actualizarVehiculos();
+        vehiculoService.actualizarVehiculo(vehiculo);
 
         tickets.add(ticket);
         ticketDAO.guardar(ticket);
